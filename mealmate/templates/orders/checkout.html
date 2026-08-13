@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+{% block content %}
+<section class="section container">
+  <h2>Checkout — {{ restaurant.name }}</h2>
+  <div style="display:grid; grid-template-columns: 1.2fr 0.8fr; gap: 40px;">
+    <form method="post">
+      {% csrf_token %}
+      <div class="field">
+        <label>Delivery Address</label>
+        <textarea name="address" rows="3" required>{{ request.user.address }}</textarea>
+      </div>
+      <div class="field">
+        <label>Payment Method</label>
+        <select name="payment_method">
+          <option value="cod">Cash on Delivery</option>
+          <option value="upi">UPI</option>
+          <option value="card">Card</option>
+        </select>
+      </div>
+      <button class="btn btn-primary btn-block" type="submit">Place Order</button>
+    </form>
+    <div class="summary-box">
+      <h4 style="color: var(--paper); font-family:'JetBrains Mono',monospace; font-size:0.8rem; text-transform:uppercase;">Order Summary</h4>
+      {% for entry in cart %}
+        <div class="summary-row"><span>{{ entry.menu_item.name }} x{{ entry.quantity }}</span><span>₹{{ entry.subtotal }}</span></div>
+      {% endfor %}
+      <div class="summary-row total"><span>Total</span><span>₹{{ cart.total }}</span></div>
+    </div>
+  </div>
+</section>
+{% endblock %}

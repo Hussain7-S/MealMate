@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+{% block content %}
+<section class="section container">
+  <div class="section-head">
+    <div><span class="eyebrow">Owner dashboard</span><h2>My Restaurants</h2></div>
+    <a href="{% url 'restaurants:restaurant_create' %}" class="btn btn-primary">+ New Restaurant</a>
+  </div>
+  <div class="grid">
+    {% for r in restaurants %}
+      <div class="card">
+        <div class="card-media">{{ r.name|slice:":1" }}</div>
+        <div class="card-body">
+          <h3>{{ r.name }}</h3>
+          <p class="muted">{{ r.menu_items.count }} menu items</p>
+          <a href="{% url 'restaurants:menu_item_create' r.pk %}" class="btn btn-outline btn-sm">+ Add menu item</a>
+          <a href="{% url 'restaurants:detail' r.pk %}" class="btn btn-dark btn-sm">View page</a>
+        </div>
+      </div>
+    {% empty %}
+      <p class="muted">You haven't added a restaurant yet.</p>
+    {% endfor %}
+  </div>
+</section>
+{% endblock %}

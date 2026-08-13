@@ -1,0 +1,70 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+
+<section class="hero">
+  <canvas id="hero-canvas"></canvas>
+  <div class="container">
+    <div>
+      <span class="hero-eyebrow">Rainy evening? We got you.</span>
+      <h1>Real food, from <em>your</em> street,<br>without the 30% tax.</h1>
+      <p class="lede">MealMate connects you directly with local kitchens — fair prices for restaurants, honest ones for you, and an AI Buddy that actually knows the menu.</p>
+      <a href="#restaurants" class="btn btn-primary">Browse restaurants ↓</a>
+    </div>
+    <div class="hero-ticket">
+      <h4>Tonight's Order · #0182</h4>
+      <div class="ticket-row"><span>Paneer Butter Masala</span><span>₹220</span></div>
+      <div class="ticket-row"><span>Garlic Naan x2</span><span>₹90</span></div>
+      <div class="ticket-row"><span>Gulab Jamun</span><span>₹60</span></div>
+      <div class="ticket-row"><span>Total</span><span>₹370</span></div>
+    </div>
+  </div>
+</section>
+
+<section class="section container" id="restaurants">
+  <div class="section-head">
+    <div>
+      <span class="eyebrow">Nearby kitchens</span>
+      <h2>Restaurants open right now</h2>
+    </div>
+  </div>
+
+  <form class="search-bar" method="get">
+    <input type="text" name="q" placeholder="Search restaurant or cuisine..." value="{{ query }}">
+    <select name="cuisine">
+      <option value="">All cuisines</option>
+      {% for c in cuisines %}
+        <option value="{{ c }}" {% if request.GET.cuisine == c %}selected{% endif %}>{{ c }}</option>
+      {% endfor %}
+    </select>
+    <button class="btn btn-dark" type="submit">Filter</button>
+  </form>
+
+  <div class="grid">
+    {% for r in restaurants %}
+      <a href="{% url 'restaurants:detail' r.pk %}" class="card">
+        <div class="card-media">
+          {% if r.image %}<img src="{{ r.image.url }}" alt="{{ r.name }}">{% else %}{{ r.name|slice:":1" }}{% endif %}
+        </div>
+        <div class="card-body">
+          <h3>{{ r.name }}</h3>
+          <p class="muted">{{ r.cuisine }}</p>
+          <div class="tag-row">
+            <span class="tag {% if r.is_open %}open{% else %}closed{% endif %}">{% if r.is_open %}Open{% else %}Closed{% endif %}</span>
+            <span class="tag">⏱ {{ r.avg_prep_time }} min</span>
+            <span class="tag">★ {{ r.average_rating }}</span>
+          </div>
+        </div>
+      </a>
+    {% empty %}
+      <p class="muted">No restaurants yet — check back soon, or ask the AI Buddy what's cooking!</p>
+    {% endfor %}
+  </div>
+</section>
+
+{% endblock %}
+
+{% block extra_scripts %}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="{% static 'js/three-hero.js' %}"></script>
+{% endblock %}

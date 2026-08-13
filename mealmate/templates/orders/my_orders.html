@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+{% block content %}
+<section class="section container">
+  <h2>My Orders</h2>
+  {% for order in orders %}
+    <div class="menu-item">
+      <span class="mono">#{{ order.id }}</span>
+      <div>
+        <strong>{{ order.restaurant.name }}</strong>
+        <p class="muted">{{ order.created_at|date:"d M, h:i A" }} · {{ order.get_status_display }}</p>
+      </div>
+      <div style="text-align:right;">
+        <div class="menu-price">₹{{ order.total_amount }}</div>
+        <a href="{% url 'orders:track_order' order.pk %}" class="btn btn-outline btn-sm">Track</a>
+      </div>
+    </div>
+  {% empty %}
+    <p class="muted">No orders yet.</p>
+  {% endfor %}
+</section>
+{% endblock %}

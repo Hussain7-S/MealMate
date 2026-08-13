@@ -1,0 +1,43 @@
+{% extends 'base.html' %}
+{% block content %}
+<section class="section container">
+  <div class="section-head">
+    <div>
+      <span class="eyebrow">{{ restaurant.cuisine }}</span>
+      <h2>{{ restaurant.name }}</h2>
+      <p class="muted">{{ restaurant.address }} · ⏱ {{ restaurant.avg_prep_time }} min · ★ {{ restaurant.average_rating }}</p>
+    </div>
+  </div>
+
+  <div class="category-filter">
+    <a href="{% url 'restaurants:detail' restaurant.pk %}" class="{% if not request.GET.category %}active{% endif %}">All</a>
+    {% for value, label in categories %}
+      <a href="?category={{ value }}" class="{% if request.GET.category == value %}active{% endif %}">{{ label }}</a>
+    {% endfor %}
+  </div>
+
+  {% for item in items %}
+    <div class="menu-item">
+      <span class="veg-dot {% if not item.is_veg %}nonveg{% endif %}"></span>
+      <div>
+        <strong>{{ item.name }}</strong>
+        <p class="muted" style="margin:4px 0 0;">{{ item.description }}</p>
+      </div>
+      <div style="text-align:right;">
+        <div class="menu-price">₹{{ item.price }}</div>
+        <form method="post" action="{% url 'orders:cart_add' item.id %}" style="margin-top:6px;">
+          {% csrf_token %}
+          <input type="hidden" name="next" value="{{ request.path }}">
+          <button class="btn btn-primary btn-sm" type="submit">Add +</button>
+        </form>
+      </div>
+    </div>
+  {% empty %}
+    <p class="muted">No items in this category yet.</p>
+  {% endfor %}
+</section>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>window.MEALMATE_RESTAURANT_ID = {{ restaurant.id }};</script>
+{% endblock %}

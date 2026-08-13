@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+{% block content %}
+<section class="section container">
+  <h2>Incoming Orders</h2>
+  {% for order in orders %}
+    <div class="menu-item">
+      <span class="mono">#{{ order.id }}</span>
+      <div>
+        <strong>{{ order.customer.username }}</strong>
+        <p class="muted">{{ order.delivery_address }} · ₹{{ order.total_amount }}</p>
+      </div>
+      <form method="post" action="{% url 'orders:update_order_status' order.pk %}" style="display:flex; gap:6px;">
+        {% csrf_token %}
+        <select name="status">
+          {% for value, label in order.STATUS_CHOICES %}
+            <option value="{{ value }}" {% if order.status == value %}selected{% endif %}>{{ label }}</option>
+          {% endfor %}
+        </select>
+        <button class="btn btn-dark btn-sm" type="submit">Update</button>
+      </form>
+    </div>
+  {% empty %}
+    <p class="muted">No orders yet.</p>
+  {% endfor %}
+</section>
+{% endblock %}

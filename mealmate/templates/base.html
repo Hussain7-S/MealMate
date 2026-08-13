@@ -1,0 +1,75 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block title %}MealMate — Order Direct, Eat Better{% endblock %}</title>
+  <link rel="stylesheet" href="{% static 'css/style.css' %}">
+  {% block extra_head %}{% endblock %}
+</head>
+<body>
+  {% csrf_token %}
+  <nav class="navbar">
+    <div class="container">
+      <a href="{% url 'restaurants:home' %}" class="brand">MealMate<span class="dot">.</span></a>
+      <div class="nav-links">
+        <a href="{% url 'restaurants:home' %}">Restaurants</a>
+        {% if user.is_authenticated %}
+          {% if user.is_owner %}
+            <a href="{% url 'restaurants:dashboard' %}">My Restaurants</a>
+            <a href="{% url 'orders:owner_orders' %}">Orders</a>
+          {% else %}
+            <a href="{% url 'orders:my_orders' %}">My Orders</a>
+          {% endif %}
+          <a href="{% url 'accounts:logout' %}">Logout ({{ user.username }})</a>
+        {% else %}
+          <a href="{% url 'accounts:login' %}">Login</a>
+          <a href="{% url 'accounts:signup' %}">Sign Up</a>
+        {% endif %}
+        <a href="{% url 'orders:cart_detail' %}" class="nav-cart">Cart</a>
+      </div>
+    </div>
+  </nav>
+
+  <main>
+    {% if messages %}
+      <div class="container">
+        <ul class="messages">
+          {% for message in messages %}<li>{{ message }}</li>{% endfor %}
+        </ul>
+      </div>
+    {% endif %}
+    {% block content %}{% endblock %}
+  </main>
+
+  <footer>
+    <div class="container">
+      <span>MealMate — built for diners and local kitchens, not commissions.</span>
+      <span class="mono">v1.0 · Django + Three.js</span>
+    </div>
+  </footer>
+
+  <!-- AI Buddy widget -->
+  <button id="ai-buddy-toggle" aria-label="Open AI Buddy">🤖</button>
+  <div id="ai-buddy-panel">
+    <div class="ai-buddy-header">
+      <span>AI Buddy <span class="status">● online</span></span>
+      <span id="ai-buddy-close" style="cursor:pointer;">✕</span>
+    </div>
+    <div id="ai-buddy-messages"></div>
+    <div class="ai-suggest-chips">
+      <button type="button" data-msg="suggest something under 150">Under ₹150</button>
+      <button type="button" data-msg="I'm sad, suggest dessert">Feeling low 😔</button>
+      <button type="button" data-msg="suggest veg food">Veg only</button>
+    </div>
+    <form id="ai-buddy-form" class="ai-buddy-input">
+      <input id="ai-buddy-input-field" type="text" placeholder="Ask for a dish, mood, budget..." autocomplete="off">
+      <button type="submit">Send</button>
+    </form>
+  </div>
+
+  {% block extra_scripts %}{% endblock %}
+  <script src="{% static 'js/aibuddy.js' %}"></script>
+</body>
+</html>
